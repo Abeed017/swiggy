@@ -10,7 +10,7 @@ RUN rm -rf ./*
 # Copy app files into container
 COPY . .
 
-# Expose default nginx port
+# Expose port 80 (since NGINX uses this)
 EXPOSE 80
 
 # No CMD needed since nginx base image has default entrypoint

@@ -19,7 +19,8 @@ pipeline {
         stage('Run Container') {
             steps {
                 script {
-                    sh 'docker run -d -p 8080:80 --name swiggy-app swiggy-clone'
+                    sh 'docker rm -f swiggy-app || true' // stop & remove any existing container
+                    sh 'docker run -d -p 3000:80 --name swiggy-app swiggy-clone'
                 }
             }
         }
