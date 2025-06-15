@@ -1,0 +1,8 @@
+.vscode
+node_modules
+Dockerfile
+Jenkinsfile
+*.md
+.git
+.gitignore
+*.log
