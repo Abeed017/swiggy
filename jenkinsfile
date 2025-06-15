@@ -1,34 +1,46 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'swiggy-clone'
+        CONTAINER_NAME = 'swiggy-app'
+        HOST_PORT = '3000'
+        CONTAINER_PORT = '80'
+    }
+
     stages {
-        stage('Clone Repo') {
+        stage('Checkout Code') {
             steps {
-                echo "Assuming Jenkins checks out the repo automatically"
+                echo "Cloning source code from repo..."
+                // Git step not needed if repo is preconfigured in Jenkins
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    docker.build('swiggy-clone')
-                }
+                echo "Building Docker image..."
+                sh "docker build -t $IMAGE_NAME ."
             }
         }
 
-        stage('Run Container') {
+        stage('Stop Old Container') {
             steps {
-                script {
-                    sh 'docker rm -f swiggy-app || true' // stop & remove any existing container
-                    sh 'docker run -d -p 3000:80 --name swiggy-app swiggy-clone'
-                }
+                echo "Stopping/removing old container..."
+                sh "docker rm -f $CONTAINER_NAME || true"
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                echo "Running new container on port $HOST_PORT..."
+                sh "docker run -d -p $HOST_PORT:$CONTAINER_PORT --name $CONTAINER_NAME $IMAGE_NAME"
             }
         }
     }
 
     post {
         always {
-            echo "Pipeline execution completed."
+            echo "Pipeline complete. Visit your app at http://<VM_PUBLIC_IP>:3000"
         }
     }
 }
